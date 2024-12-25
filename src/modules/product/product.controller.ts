@@ -16,7 +16,6 @@ import { ProductService } from './product.service'
 @Controller('product')
 @UsePipes(new ValidationPipe())
 @ApiTags('Product')
-
 export class ProductController {
 	constructor(private readonly productService: ProductService) {}
 

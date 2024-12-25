@@ -1,22 +1,12 @@
 import { PrismaService } from '@/root/prisma'
-import { Injectable } from '@nestjs/common'
+import { ConflictException, Injectable } from '@nestjs/common'
 import { plainToInstance } from 'class-transformer'
 import { CreateProductDto, UpdateProductDto } from './dto/request-dto'
 import { ProductResponseDto } from './dto/response-dto'
 
 @Injectable()
 export class ProductService {
-
-	constructor(
-		private readonly prismaService: PrismaService,
-	) {}
-
-	create(createProductDto: CreateProductDto) {
-		const newProduct = this.prismaService.product.create({
-			data: createProductDto
-		})
-		return plainToInstance(ProductResponseDto, newProduct)
-	}
+	constructor(private readonly prismaService: PrismaService) {}
 
 	findAll() {
 		const products = this.prismaService.product.findMany()
@@ -28,6 +18,16 @@ export class ProductService {
 			where: { id }
 		})
 		return plainToInstance(ProductResponseDto, product)
+	}
+
+	async create(createProductDto: CreateProductDto) {
+		await this.isUnique(createProductDto.key)
+
+		const newProduct = await this.prismaService.product.create({
+			data: createProductDto
+		})
+
+		return plainToInstance(ProductResponseDto, newProduct)
 	}
 
 	update(updateProductDto: UpdateProductDto) {
@@ -43,5 +43,17 @@ export class ProductService {
 			where: { id }
 		})
 		return plainToInstance(ProductResponseDto, deletedProduct)
+	}
+
+	async isUnique(key: string): Promise<void> {
+		const existingProduct = await this.prismaService.product.findUnique({
+			where: {
+				key
+			}
+		})
+
+		if (existingProduct) {
+			throw new ConflictException('Product Key already exist!')
+		}
 	}
 }
