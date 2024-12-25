@@ -1,33 +1,47 @@
 import { PrismaService } from '@/root/prisma'
 import { Injectable } from '@nestjs/common'
-import { CreateProductDto } from './dto/create-product.dto'
-import { UpdateProductDto } from './dto/update-product.dto'
+import { plainToInstance } from 'class-transformer'
+import { CreateProductDto, UpdateProductDto } from './dto/request-dto'
+import { ProductResponseDto } from './dto/response-dto'
 
 @Injectable()
 export class ProductService {
 
-	
 	constructor(
 		private readonly prismaService: PrismaService,
 	) {}
 
 	create(createProductDto: CreateProductDto) {
-		return 'This action adds a new product'
+		const newProduct = this.prismaService.product.create({
+			data: createProductDto
+		})
+		return plainToInstance(ProductResponseDto, newProduct)
 	}
 
 	findAll() {
-		return `This action returns all product`
+		const products = this.prismaService.product.findMany()
+		return plainToInstance(ProductResponseDto, products)
 	}
 
 	findOne(id: number) {
-		return `This action returns a #${id} product`
+		const product = this.prismaService.product.findUnique({
+			where: { id }
+		})
+		return plainToInstance(ProductResponseDto, product)
 	}
 
-	update(id: number, updateProductDto: UpdateProductDto) {
-		return `This action updates a #${id} product`
+	update(updateProductDto: UpdateProductDto) {
+		const updatedProduct = this.prismaService.product.update({
+			where: { id: updateProductDto.id },
+			data: updateProductDto
+		})
+		return plainToInstance(ProductResponseDto, updatedProduct)
 	}
 
 	remove(id: number) {
-		return `This action removes a #${id} product`
+		const deletedProduct = this.prismaService.product.delete({
+			where: { id }
+		})
+		return plainToInstance(ProductResponseDto, deletedProduct)
 	}
 }
