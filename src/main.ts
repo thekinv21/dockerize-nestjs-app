@@ -17,7 +17,7 @@ async function bootstrap() {
 
 	SwaggerModule.setup('docs', app, SwaggerModule.createDocument(app, swagger))
 
-	await app.listen(process.env.APP_PORT || 5200)
+	await app.listen(process.env.APP_PORT || 4200)
 
 	dotenv.config()
 }

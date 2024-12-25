@@ -4,3 +4,10 @@ dist
 *.md
 .git
 .env
+.prettierrc
+.gitignore
+.eslintrc.js
+.vscode
+Dockerfile
+docker-compose.yml
+README.md
