@@ -1,38 +1,18 @@
-version: '3.9'
-
 services:
   database:
-    image: ${DB_IMAGE}:latest
-    container_name: postgres_db
-    restart: always
+    image: postgres:latest
     environment:
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_DB: database
+      POSTGRES_USER: username
+      POSTGRES_PASSWORD: password
     ports:
-      - '${DB_PORT}:${DB_PORT}'
-    networks:
-      - app_network
+      - '5432:5432'
 
-  app:
-    image: node:20
-    container_name: nestjs_app
-    working_dir: /app
-    volumes:
-      - .:/app
+  backend:
+    build: .
     ports:
-      - '${APP_PORT}:${APP_PORT}'
+      - '4200:4200'
     depends_on:
       - database
-    environment:
-      DATABASE_URL: ${DATABASE_URL}
-      APP_PORT: ${APP_PORT}
-    command: npm run start:prod
     env_file:
       - .env
-    networks:
-      - app_network
-
-networks:
-  app_network:
-    driver: bridge

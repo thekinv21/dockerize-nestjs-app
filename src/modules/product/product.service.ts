@@ -1,4 +1,4 @@
-import { PrismaService } from '@/root/src/prisma'
+import { PrismaService } from '@/root/prisma'
 import { ConflictException, Injectable } from '@nestjs/common'
 import { plainToInstance } from 'class-transformer'
 import { CreateProductDto, UpdateProductDto } from './dto/request-dto'
